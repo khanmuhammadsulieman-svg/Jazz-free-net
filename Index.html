@@ -24,10 +24,7 @@
     }
     h1{margin:0 0 18px; font-size:28px; text-align:center;}
     label{display:block; font-size:14px; color:var(--muted); margin-bottom:8px;}
-    input[type="tel"]{
-      width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.12);
-      background:#0b1020; color:var(--text); outline:none; font-size:16px;
-    }
+    <input type="tel" required pattern="[0-9]{11}" placeholder="Enter your number">
     input[type="tel"]:focus{border-color:var(--ring); box-shadow:0 0 0 4px rgba(59,130,246,.15);}
     .plans{margin:18px 0 6px; display:grid; gap:10px;}
     .plan{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:#0b1020;}
